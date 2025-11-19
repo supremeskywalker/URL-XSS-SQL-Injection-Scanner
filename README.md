@@ -20,7 +20,7 @@ A lightweight educational scanner that checks URLs for potential **XSS** and **S
 
 ## 📦 Requirements
 
-- Python 3.x
+Requires Python 3.7+
 - `requests` module  
   Install with:
 
