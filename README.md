@@ -1,2 +1,28 @@
-# URL-XSS-SQL-Injection-Scanner
-Web Vulnerability Scanner is a lightweight Python tool that checks URLs for common security issues like XSS, SQL Injection, command injection, and path traversal. It requires no external modules and provides clear, easy‑to‑read results, making it ideal for quick security testing and learning.
+# URL XSS & SQL Injection Scanner
+
+A lightweight educational scanner that checks URLs for potential **XSS** and **SQL Injection** vulnerabilities by injecting payloads into query parameters and analyzing server responses.
+
+> ⚠️ For educational and legal security testing only.  
+> Do not scan websites you do not own or do not have permission to test.
+
+---
+
+## 🔥 Features
+
+- Detects reflected **XSS**
+- Detects basic **SQL Injection**
+- No external table libraries required
+- ASCII table output
+- Clean code, easy to understand
+- No extra dependencies except `requests`
+
+---
+
+## 📦 Requirements
+
+- Python 3.x
+- `requests` module  
+  Install with:
+
+```bash
+pip install requests
