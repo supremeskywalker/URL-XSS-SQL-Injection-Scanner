@@ -1,0 +1,73 @@
+import requests
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+def build_url(base_url, param, payload):
+    parsed = urlparse(base_url)
+    qs = parse_qs(parsed.query)
+    qs[param] = payload
+    new_query = urlencode(qs, doseq=True)
+    return urlunparse((parsed.scheme, parsed.netloc, parsed.path, parsed.params, new_query, parsed.fragment))
+
+def check_payload(base_url, payload, vuln_type, results):
+    parsed = urlparse(base_url)
+    params = parse_qs(parsed.query)
+
+    for p in params:
+        test_url = build_url(base_url, p, payload)
+        try:
+            r = requests.get(test_url, timeout=5)
+            if payload in r.text:
+                results.append((vuln_type, p, test_url))
+        except:
+            pass
+
+def print_table(results):
+    if not results:
+        print("\nNo potential vulnerabilities found.\n")
+        return
+
+    col1 = "Type"
+    col2 = "Parameter"
+    col3 = "URL"
+
+    # column widths
+    w1 = max(len(col1), max(len(row[0]) for row in results))
+    w2 = max(len(col2), max(len(row[1]) for row in results))
+    w3 = max(len(col3), max(len(row[2]) for row in results))
+
+    sep = "+" + "-"*(w1+2) + "+" + "-"*(w2+2) + "+" + "-"*(w3+2) + "+"
+
+    print("\n" + sep)
+    print(f"| {col1.ljust(w1)} | {col2.ljust(w2)} | {col3.ljust(w3)} |")
+    print(sep)
+
+    for r in results:
+        print(f"| {r[0].ljust(w1)} | {r[1].ljust(w2)} | {r[2].ljust(w3)} |")
+
+    print(sep + "\n")
+
+def main():
+    target = input("Target URL: ").strip()
+
+    xss_payloads = [
+        "<script>alert(1)</script>",
+        "\"'><script>alert(1)</script>"
+    ]
+
+    sqli_payloads = [
+        "' OR '1'='1",
+        "\" OR \"1\"=\"1"
+    ]
+
+    results = []
+
+    for x in xss_payloads:
+        check_payload(target, x, "XSS", results)
+
+    for s in sqli_payloads:
+        check_payload(target, s, "SQLi", results)
+
+    print_table(results)
+
+if __name__ == "__main__":
+    main()
